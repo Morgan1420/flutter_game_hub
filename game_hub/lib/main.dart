@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import './tictactoe.dart';
 
 void main() {
   runApp(MainMenu());
@@ -11,17 +14,12 @@ class MainMenu extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Game HUB',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: MainMenu_sf(),
+      home: HomeMenu(),
     );
   }
 }
 
-class MainMenu_sf extends StatefulWidget {
-  @override
-  _MainMenuState createState() => _MainMenuState();
-}
-
-class _MainMenuState extends State<MainMenu_sf> {
+class HomeMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,23 +29,33 @@ class _MainMenuState extends State<MainMenu_sf> {
             alignment: Alignment.center,
             child: Column(
               children: <Widget>[
-                buildButton("buttonText", Colors.amber, 1),
-                buildButton("Minesweeper", Colors.amber, 1),
+                buildButton("Tic-Tac-Toe", Colors.blue, 1, context),
+                buildButton("Minesweeper", Colors.blue, 1, context),
               ],
             )),
       ]),
     );
   }
 
-  Widget buildButton(
-      String buttonText, Color buttonColor, double buttonHeight) {
+  Widget buildButton(String buttonText, Color buttonColor, double buttonHeight,
+      BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * .1 * buttonHeight,
       width: MediaQuery.of(context).size.width * 0.8,
+      margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
       color: buttonColor,
       child: TextButton(
-        onPressed: null,
-        child: Text(buttonText),
+        onPressed: () {
+          if (buttonText == "Tic-Tac-Toe") {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => TicTacToe()));
+          }
+        },
+        child: Text(buttonText,
+            style: const TextStyle(
+              fontSize: 40,
+              color: Colors.white,
+            )),
       ),
     );
   }
