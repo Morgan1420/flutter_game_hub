@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import './tictactoe.dart';
 
@@ -42,7 +40,7 @@ class HomeMenu extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height * .1 * buttonHeight,
       width: MediaQuery.of(context).size.width * 0.8,
-      margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
+      margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
       color: buttonColor,
       child: TextButton(
         onPressed: () {
