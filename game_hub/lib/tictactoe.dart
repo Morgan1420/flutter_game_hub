@@ -16,6 +16,7 @@ class TicTacToeState extends State<TicTacToe> {
   bool gameOver = false;
   final TORNS_MAXIMS = 9;
   int numTorns = 0;
+  Map signColors = {'X': Colors.red, 'O': Colors.black};
   // --- Widget builder
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,7 @@ class TicTacToeState extends State<TicTacToe> {
           margin: EdgeInsets.fromLTRB(0, 70, 0, 50),
           child: Text(
             victoryText,
-            style: TextStyle(fontSize: 35, color: Colors.blue),
+            style: TextStyle(fontSize: 35, color: signColors[torn]),
           ),
         ),
         Container(
@@ -70,13 +71,16 @@ class TicTacToeState extends State<TicTacToe> {
     return Container(
         alignment: Alignment.center,
         width: MediaQuery.of(context).size.width * 0.33333,
-        height: MediaQuery.of(context).size.height * 0.15,
+        height: MediaQuery.of(context).size.width * 0.33333,
         decoration: BoxDecoration(
             border: Border.all(
-          color: Colors.blue,
-          width: MediaQuery.of(context).size.width * 0.0002,
+          color: signColors[torn],
+          width: MediaQuery.of(context).size.width * 0.002,
         )),
         child: TextButton(
+          style: TextButton.styleFrom(
+              minimumSize:
+                  Size.square(MediaQuery.of(context).size.width * 0.33333)),
           onPressed: () {
             setState(() {
               if (!gameOver) {
@@ -109,7 +113,10 @@ class TicTacToeState extends State<TicTacToe> {
               }
             });
           },
-          child: Text(matrix[x][y], style: TextStyle(fontSize: 50)),
+          child: Text(
+            matrix[x][y],
+            style: TextStyle(fontSize: 50, color: signColors[matrix[x][y]]),
+          ),
         ));
   }
 
