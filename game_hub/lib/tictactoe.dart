@@ -24,7 +24,7 @@ class TicTacToeState extends State<TicTacToe> {
       appBar: AppBar(title: const Text("Tic-Tac-Toe")),
       body: Column(children: <Widget>[
         Container(
-          margin: EdgeInsets.fromLTRB(0, 70, 0, 50),
+          margin: const EdgeInsets.fromLTRB(0, 70, 0, 50),
           child: Text(
             victoryText,
             style: TextStyle(fontSize: 35, color: signColors[torn]),
