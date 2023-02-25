@@ -12,7 +12,10 @@ class MinesweeperState extends State<Minesweeper> {
   final numOfMines = 40;
 
   bool gameStarted = false;
+  bool gameOver = false;
+
   List<List<String>> matrix = [];
+  List<List<bool>> matrixDescobertes = [];
   List<List<String>> matrixsolucio =
       []; // B = bomba, E = empty, num = num bombes adjecents
 
@@ -37,6 +40,7 @@ class MinesweeperState extends State<Minesweeper> {
               rowBuild(7),
               rowBuild(8),
               rowBuild(9),
+              rowBuild(10),
               rowBuild(11),
               rowBuild(12),
               rowBuild(13),
@@ -63,9 +67,9 @@ class MinesweeperState extends State<Minesweeper> {
       height: MediaQuery.of(context).size.width / (numOfColumns + 2),
       // decoració i estils
       decoration: BoxDecoration(
-          color: Colors.blue,
+          color: getButtonColor(x, y),
           border: Border.all(
-            color: Colors.blue,
+            color: getButtonColor(x, y),
             width: MediaQuery.of(context).size.width * 0.001,
           )),
       // fill button
@@ -81,18 +85,23 @@ class MinesweeperState extends State<Minesweeper> {
             if (!gameStarted) {
               startGame(x, y);
               gameStarted = true;
+              unmaskButton(x, y);
+            } else if (!gameOver) {
+              unmaskButton(x, y);
             }
           });
         },
         // fill
         child: Text(
-          matrixsolucio[x][y],
+          matrix[x][y],
           style: TextStyle(fontSize: 12, color: Colors.white),
         ),
       ),
     );
   }
 
+  // --------------------------------------- DISSENY GRÀFIC
+  //  constructor de files de botons
   Widget rowBuild(int row) {
     return Row(
       children: [
@@ -118,22 +127,74 @@ class MinesweeperState extends State<Minesweeper> {
     );
   }
 
+  // Colors dels botons
+  Color getButtonColor(int x, int y) {
+    Color colorDefinitiu = Colors.blue;
+
+    if (matrixDescobertes[x][y] == true) {
+      switch (matrix[x][y]) {
+        case "":
+          colorDefinitiu = Colors.grey;
+          break;
+        case "1":
+          colorDefinitiu = Colors.green.shade400;
+          break;
+        case "2":
+          colorDefinitiu = Colors.green.shade600;
+          break;
+        case "3":
+          colorDefinitiu = Colors.green.shade800;
+          break;
+        case "4":
+          colorDefinitiu = Colors.yellow.shade700;
+          break;
+        case "5":
+          colorDefinitiu = Colors.yellow.shade900;
+          break;
+        case "6":
+          colorDefinitiu = Colors.red.shade400;
+          break;
+        case "7":
+          colorDefinitiu = Colors.red.shade700;
+          break;
+        case "8":
+          colorDefinitiu = Colors.red.shade900;
+          break;
+        case "B":
+          colorDefinitiu = Colors.black;
+          break;
+
+        default:
+      }
+    }
+
+    return colorDefinitiu;
+  }
+
+  // --------------------------------------- GAME START
+  // funció que es crida al entrar a la pàgina (statefull widget)
   void setUpMatrix() {
     for (var i = 0; i < numOfRows; i++) {
       List<String> row = [];
+      List<String> row2 = [];
+      List<bool> rowDescobertes = [];
       for (var j = 0; j < numOfColumns; j++) {
         row.add("");
+        row2.add("");
+        rowDescobertes.add(false);
       }
       matrix.add(row);
-      matrixsolucio.add(row);
+      matrixsolucio.add(row2);
+      matrixDescobertes.add(rowDescobertes);
     }
   }
 
+  // funció que es crida al premer el primer botó
   void startGame(int xo, int yo) {
     // posem les bombes dins la matriu solució "millorar funció fent-la while o algo"
     for (var i = 0; i < numOfMines; i++) {
-      var bombX = Random().nextInt(numOfRows);
-      var bombY = Random().nextInt(numOfColumns);
+      var bombX = Random().nextInt(numOfRows - 1);
+      var bombY = Random().nextInt(numOfColumns - 1);
 
       if (matrixsolucio[bombX][bombY] == "" &&
           !(bombX >= xo - 1 &&
@@ -151,7 +212,7 @@ class MinesweeperState extends State<Minesweeper> {
       for (var j = 0; j < numOfColumns; j++) {
         if (matrixsolucio[i][j] != "B") {
           var numVeinsBomba = veinsBomba(i, j);
-          if (numVeinsBomba != 0) {
+          if (numVeinsBomba > 0) {
             matrixsolucio[i][j] = numVeinsBomba.toString();
           } else {
             matrixsolucio[i][j] = "";
@@ -159,22 +220,25 @@ class MinesweeperState extends State<Minesweeper> {
         }
       }
     }
+
+    // mostrem el botó seleccionat
   }
 
+  // mira tots els veins que son bombes
   int veinsBomba(int x, int y) {
     var numVeinsBomba = 0;
 
     // N
-    if (x != 0) {
+    if (x > 0) {
       // NW
-      if (y != 0) {
+      if (y > 0) {
         if (matrixsolucio[x - 1][y - 1] == "B") {
           numVeinsBomba++;
         }
       }
 
       // NE
-      if (y != numOfColumns - 1) {
+      if (y < numOfColumns - 1) {
         if (matrixsolucio[x - 1][y + 1] == "B") {
           numVeinsBomba++;
         }
@@ -187,30 +251,30 @@ class MinesweeperState extends State<Minesweeper> {
     }
 
     // W
-    if (y != 0) {
+    if (y > 0) {
       if (matrixsolucio[x][y - 1] == "B") {
         numVeinsBomba++;
       }
     }
 
     // E
-    if (y != numOfColumns - 1) {
+    if (y < numOfColumns - 1) {
       if (matrixsolucio[x][y + 1] == "B") {
         numVeinsBomba++;
       }
     }
 
     // S
-    if (x != numOfRows - 1) {
+    if (x < numOfRows - 1) {
       // SW
-      if (y != 0) {
+      if (y > 0) {
         if (matrixsolucio[x + 1][y - 1] == "B") {
           numVeinsBomba++;
         }
       }
 
       // SE
-      if (y != numOfColumns - 1) {
+      if (y < numOfColumns - 1) {
         if (matrixsolucio[x + 1][y + 1] == "B") {
           numVeinsBomba++;
         }
@@ -224,4 +288,81 @@ class MinesweeperState extends State<Minesweeper> {
 
     return numVeinsBomba;
   }
+
+  // --------------------------------------- GAME PLAY
+  // es mostra el que hi ha a matriuSolució en una posició donada
+  void unmaskButton(int x, int y) {
+    matrixDescobertes[x][y] = true;
+    matrix[x][y] = matrixsolucio[x][y];
+
+    if (matrixsolucio[x][y] == "B") {
+      gameOver = true;
+    } else if (matrixsolucio[x][y] == "") {
+      // mostra les del voltant
+      unmaskNeighbours(x, y);
+    }
+  }
+
+  // es fa unmaskButton de tots els botons adjecents a un que no s'hagin mostrat abans
+  void unmaskNeighbours(int x, int y) {
+    // N
+    if (x != 0) {
+      // NW
+      if (y != 0) {
+        if (matrixDescobertes[x - 1][y - 1] == false) {
+          unmaskButton(x - 1, y - 1);
+        }
+      }
+
+      // NE
+      if (y != numOfColumns - 1) {
+        if (matrixDescobertes[x - 1][y + 1] == false) {
+          unmaskButton(x - 1, y + 1);
+        }
+      }
+
+      // N
+      if (matrixDescobertes[x - 1][y] == false) {
+        unmaskButton(x - 1, y);
+      }
+    }
+
+    // W
+    if (y != 0) {
+      if (matrixDescobertes[x][y - 1] == false) {
+        unmaskButton(x, y - 1);
+      }
+    }
+
+    // E
+    if (y != numOfColumns - 1) {
+      if (matrixDescobertes[x][y + 1] == false) {
+        unmaskButton(x, y + 1);
+      }
+    }
+
+    // S
+    if (x != numOfRows - 1) {
+      // SW
+      if (y != 0) {
+        if (matrixDescobertes[x + 1][y - 1] == false) {
+          unmaskButton(x + 1, y - 1);
+        }
+      }
+
+      // SE
+      if (y != numOfColumns - 1) {
+        if (matrixDescobertes[x + 1][y + 1] == false) {
+          unmaskButton(x + 1, y + 1);
+        }
+      }
+
+      // S
+      if (matrixDescobertes[x + 1][y] == false) {
+        unmaskButton(x + 1, y);
+      }
+    }
+  }
+
+  void flagButton(int x, int y) {}
 }
