@@ -86,8 +86,16 @@ class MinesweeperState extends State<Minesweeper> {
               startGame(x, y);
               gameStarted = true;
               unmaskButton(x, y);
-            } else if (!gameOver) {
+            } else if (!gameOver && !matrixDescobertes[x][y]) {
               unmaskButton(x, y);
+            }
+          });
+        },
+        onLongPress: () {
+          setState(() {
+            if (gameStarted && !gameOver && !matrixDescobertes[x][y]) {
+              matrixDescobertes[x][y] = true;
+              matrix[x][y] = "F";
             }
           });
         },
@@ -162,6 +170,9 @@ class MinesweeperState extends State<Minesweeper> {
           break;
         case "B":
           colorDefinitiu = Colors.black;
+          break;
+        case "F":
+          colorDefinitiu = Colors.red.shade400;
           break;
 
         default:
@@ -364,5 +375,6 @@ class MinesweeperState extends State<Minesweeper> {
     }
   }
 
+  // es marcarà una zona com a vista
   void flagButton(int x, int y) {}
 }
