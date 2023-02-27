@@ -96,6 +96,9 @@ class MinesweeperState extends State<Minesweeper> {
             if (gameStarted && !gameOver && !matrixDescobertes[x][y]) {
               matrixDescobertes[x][y] = true;
               matrix[x][y] = "F";
+            } else if (gameStarted && !gameOver && matrixDescobertes[x][y]) {
+              matrixDescobertes[x][y] = false;
+              matrix[x][y] = "";
             }
           });
         },
