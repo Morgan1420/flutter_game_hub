@@ -19,41 +19,48 @@ class MinesweeperState extends State<Minesweeper> {
   List<List<String>> matrixsolucio =
       []; // B = bomba, E = empty, num = num bombes adjecents
 
+  String victoryText = "";
+  int flagCount = 0;
+
   @override
   Widget build(BuildContext context) {
     setUpMatrix();
+    flagCount = numOfMines;
     return Scaffold(
         appBar: AppBar(title: const Text("Minesweeper")),
         body: InteractiveViewer(
-          child: Column(
-            children: <Widget>[
-              const Expanded(
-                child: Divider(color: Colors.transparent),
-              ),
-              rowBuild(0),
-              rowBuild(1),
-              rowBuild(2),
-              rowBuild(3),
-              rowBuild(4),
-              rowBuild(5),
-              rowBuild(6),
-              rowBuild(7),
-              rowBuild(8),
-              rowBuild(9),
-              rowBuild(10),
-              rowBuild(11),
-              rowBuild(12),
-              rowBuild(13),
-              rowBuild(14),
-              rowBuild(15),
-              rowBuild(16),
-              rowBuild(17),
-              rowBuild(18),
-              rowBuild(19),
-              const Expanded(
-                child: Divider(color: Colors.transparent),
-              ),
-            ],
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).size.width / (numOfColumns + 2),
+                  height:
+                      MediaQuery.of(context).size.width / (numOfColumns + 10),
+                  child: Text(victoryText),
+                ),
+                rowBuild(0),
+                rowBuild(1),
+                rowBuild(2),
+                rowBuild(3),
+                rowBuild(4),
+                rowBuild(5),
+                rowBuild(6),
+                rowBuild(7),
+                rowBuild(8),
+                rowBuild(9),
+                rowBuild(10),
+                rowBuild(11),
+                rowBuild(12),
+                rowBuild(13),
+                rowBuild(14),
+                rowBuild(15),
+                rowBuild(16),
+                rowBuild(17),
+                rowBuild(18),
+                rowBuild(19),
+              ],
+            ),
           ),
         ));
   }
@@ -86,19 +93,35 @@ class MinesweeperState extends State<Minesweeper> {
               startGame(x, y);
               gameStarted = true;
               unmaskButton(x, y);
+              victoryText = "$flagCount flags left";
             } else if (!gameOver && !matrixDescobertes[x][y]) {
               unmaskButton(x, y);
+              victoryText = "$flagCount flags left";
+              if (victoryConditions()) {
+                gameOver = true;
+                victoryText = "Has acabat la partida!!";
+              }
             }
           });
         },
         onLongPress: () {
           setState(() {
-            if (gameStarted && !gameOver && !matrixDescobertes[x][y]) {
+            if (gameStarted &&
+                !gameOver &&
+                !matrixDescobertes[x][y] &&
+                flagCount > 0) {
               matrixDescobertes[x][y] = true;
               matrix[x][y] = "F";
-            } else if (gameStarted && !gameOver && matrixDescobertes[x][y]) {
+              flagCount = flagCount - 1;
+              victoryText = "$flagCount flags left";
+            } else if (gameStarted &&
+                !gameOver &&
+                matrixDescobertes[x][y] &&
+                matrix[x][y] == "F") {
               matrixDescobertes[x][y] = false;
               matrix[x][y] = "";
+              flagCount++;
+              victoryText = "$flagCount flags left";
             }
           });
         },
@@ -379,5 +402,17 @@ class MinesweeperState extends State<Minesweeper> {
   }
 
   // es marcarà una zona com a vista
-  void flagButton(int x, int y) {}
+  bool victoryConditions() {
+    bool finished = true;
+
+    for (int i = 0; i < numOfRows; i++) {
+      for (int j = 0; j < numOfColumns; j++) {
+        if (matrixDescobertes[i][j] == false) {
+          finished = false;
+        }
+      }
+    }
+
+    return finished;
+  }
 }
