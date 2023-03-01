@@ -19,50 +19,64 @@ class MinesweeperState extends State<Minesweeper> {
   List<List<String>> matrixsolucio =
       []; // B = bomba, E = empty, num = num bombes adjecents
 
-  String victoryText = "";
-  int flagCount = 0;
+  String victoryText = "Click anywhere to start";
+  int flagCount = 40;
 
   @override
   Widget build(BuildContext context) {
     setUpMatrix();
-    flagCount = numOfMines;
     return Scaffold(
         appBar: AppBar(title: const Text("Minesweeper")),
-        body: InteractiveViewer(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width / (numOfColumns + 2),
-                  height:
-                      MediaQuery.of(context).size.width / (numOfColumns + 10),
-                  child: Text(victoryText),
-                ),
-                rowBuild(0),
-                rowBuild(1),
-                rowBuild(2),
-                rowBuild(3),
-                rowBuild(4),
-                rowBuild(5),
-                rowBuild(6),
-                rowBuild(7),
-                rowBuild(8),
-                rowBuild(9),
-                rowBuild(10),
-                rowBuild(11),
-                rowBuild(12),
-                rowBuild(13),
-                rowBuild(14),
-                rowBuild(15),
-                rowBuild(16),
-                rowBuild(17),
-                rowBuild(18),
-                rowBuild(19),
-              ],
+        body: Column(children: [
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 0.0782,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+                color: Colors.blue,
+                border: Border.all(
+                    color: Colors.black,
+                    width: MediaQuery.of(context).size.width * 0.001)),
+            child: Text(
+              victoryText,
+              style: const TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
           ),
-        ));
+          InteractiveViewer(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                  0, 0, 0, MediaQuery.of(context).size.height * 0.1582),
+              scrollDirection: Axis.vertical,
+              child: Column(
+                children: <Widget>[
+                  rowBuild(0),
+                  rowBuild(1),
+                  rowBuild(2),
+                  rowBuild(3),
+                  rowBuild(4),
+                  rowBuild(5),
+                  rowBuild(6),
+                  rowBuild(7),
+                  rowBuild(8),
+                  rowBuild(9),
+                  rowBuild(10),
+                  rowBuild(11),
+                  rowBuild(12),
+                  rowBuild(13),
+                  rowBuild(14),
+                  rowBuild(15),
+                  rowBuild(16),
+                  rowBuild(17),
+                  rowBuild(18),
+                  rowBuild(19),
+                ],
+              ),
+            ),
+          )
+        ]));
   }
 
   Widget minesButton(int x, int y) {
@@ -96,7 +110,6 @@ class MinesweeperState extends State<Minesweeper> {
               victoryText = "$flagCount flags left";
             } else if (!gameOver && !matrixDescobertes[x][y]) {
               unmaskButton(x, y);
-              victoryText = "$flagCount flags left";
               if (victoryConditions()) {
                 gameOver = true;
                 victoryText = "Has acabat la partida!!";
@@ -114,6 +127,10 @@ class MinesweeperState extends State<Minesweeper> {
               matrix[x][y] = "F";
               flagCount = flagCount - 1;
               victoryText = "$flagCount flags left";
+              if (victoryConditions()) {
+                gameOver = true;
+                victoryText = "Has acabat la partida!!";
+              }
             } else if (gameStarted &&
                 !gameOver &&
                 matrixDescobertes[x][y] &&
@@ -333,6 +350,7 @@ class MinesweeperState extends State<Minesweeper> {
     matrix[x][y] = matrixsolucio[x][y];
 
     if (matrixsolucio[x][y] == "B") {
+      victoryText = "BOOOOM!!! You Lost :(";
       gameOver = true;
     } else if (matrixsolucio[x][y] == "") {
       // mostra les del voltant
