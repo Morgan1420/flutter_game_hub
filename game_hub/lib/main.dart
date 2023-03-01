@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './tictactoe.dart';
+import './minesweeper.dart';
 
 void main() {
   runApp(MainMenu());
@@ -47,6 +48,9 @@ class HomeMenu extends StatelessWidget {
           if (buttonText == "Tic-Tac-Toe") {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => TicTacToe()));
+          } else if (buttonText == "Minesweeper") {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => Minesweeper()));
           }
         },
         child: Text(buttonText,
