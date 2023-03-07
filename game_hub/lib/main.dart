@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import './tictactoe.dart';
 import './minesweeper.dart';
+import './sudoku.dart';
 
 void main() {
   runApp(MainMenu());
@@ -30,6 +31,7 @@ class HomeMenu extends StatelessWidget {
               children: <Widget>[
                 buildButton("Tic-Tac-Toe", Colors.blue, 1, context),
                 buildButton("Minesweeper", Colors.blue, 1, context),
+                buildButton("Sudoku", Colors.blue, 1, context),
               ],
             )),
       ]),
@@ -51,6 +53,9 @@ class HomeMenu extends StatelessWidget {
           } else if (buttonText == "Minesweeper") {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => Minesweeper()));
+          } else if (buttonText == "Sudoku") {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Sudoku()));
           }
         },
         child: Text(buttonText,
