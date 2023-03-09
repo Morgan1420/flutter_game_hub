@@ -30,6 +30,9 @@ class SudokuState extends State<Sudoku> {
       // mides
       width: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2),
       height: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2),
+      decoration:
+          BoxDecoration(border: Border.all(color: Colors.black, width: 0.05)),
+
       child: TextButton(
           // estil
           style: TextButton.styleFrom(
@@ -48,9 +51,16 @@ class SudokuState extends State<Sudoku> {
         buildMatrixButton(row, 0),
         buildMatrixButton(row, 1),
         buildMatrixButton(row, 2),
+        const VerticalDivider(
+          indent: 10,
+        ),
         buildMatrixButton(row, 3),
         buildMatrixButton(row, 4),
         buildMatrixButton(row, 5),
+        const VerticalDivider(
+          indent: 10,
+          thickness: 5,
+        ),
         buildMatrixButton(row, 6),
         buildMatrixButton(row, 7),
         buildMatrixButton(row, 8)
@@ -65,9 +75,16 @@ class SudokuState extends State<Sudoku> {
         buildMatrixButtonRow(0),
         buildMatrixButtonRow(1),
         buildMatrixButtonRow(2),
+        const Divider(
+          thickness: 1,
+          indent: 0,
+        ),
         buildMatrixButtonRow(3),
         buildMatrixButtonRow(4),
         buildMatrixButtonRow(5),
+        const Divider(
+          indent: 10,
+        ),
         buildMatrixButtonRow(6),
         buildMatrixButtonRow(7),
         buildMatrixButtonRow(8)
@@ -111,7 +128,7 @@ class SudokuBlueprint {
     initMatriuZeros();
     if (solucio) {
       // omplir els boxs de la matriu amb numeros random de l'1 al 9 (sense repetir)
-
+      fillBoxes();
       // ordenar les files tenint en compte les columnes, d'esquerra a dreta si n'hi ha algun repetit o que no cumpleix condicions el cambiem per unn de la box que si les cumpleixi
     } else {}
   }
@@ -120,43 +137,75 @@ class SudokuBlueprint {
   // omple les boxes de la matriu amb numeros random de l'1 al 9 (sense repetir)
   void fillBoxes() {
     for (var b = 0; b < NUMBER_OF_BOXES; b++) {
+      List<String> availableNums = [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ];
       for (var c = 0; c < BOX_SIZE; c++) {
         for (var r = 0; r < BOX_SIZE; r++) {
-          var randNum = Random().nextInt(MATRIX_SIZE - 1);
-          if (!numInBox(randNum, b)) {
-            m_matriu[m_boxIndicator[b][0] + c][m_boxIndicator[b][1] + r] =
-                randNum.toString();
-          } else {
-            r--;
-          }
+          var randNum = Random().nextInt(availableNums.length);
+          m_matriu[m_boxIndicator[b][0] + c][m_boxIndicator[b][1] + r] =
+              availableNums[randNum];
+          availableNums.remove(availableNums[randNum]);
         }
       }
     }
-  }
-
-  // mira si un numero està en una capsa
-  bool numInBox(var num, var box) {
-    bool inBox = false;
-
-    var c = 0;
-    while (!inBox && c < BOX_SIZE) {
-      var r = 0;
-      while (!inBox && r < BOX_SIZE) {
-        if (m_matriu[m_boxIndicator[box][0] + c][m_boxIndicator[box][1] + r] ==
-            num.toString()) {
-          inBox = true;
-        }
-        r++;
-      }
-      c++;
-    }
-
-    return inBox;
   }
 
   // ordenar les files de la matriu tenint en compte les columnes i la mateixa
-  void sortMatrix() {}
+  void sortMatrix() {
+    for (var r = 0; r < MATRIX_SIZE; r++) {
+      var numCanvis = 0;
+      for (var c = 0; c < MATRIX_SIZE; c++) {
+        if (igualEsquerra(r, c)) // mirar esquerra a veure si hi ha una igual
+        {
+          cambiaEsquerra(r, c);
+        } else if (igualAmunt(r, c)) // mirar amunt per si hi ha una igual
+        {
+          cambiaAmunt();
+        } else {
+          numCanvis = 0;
+        }
+      }
+    }
+  }
 
+  bool igualEsquerra(int row, int col) {
+    bool igual = false;
+
+    var c = col - 1;
+    while (!igual && c <= 0) {
+      if (m_matriu[row][c] == m_matriu[row][col]) {
+        igual = true;
+      }
+      c--;
+    }
+    return igual;
+  }
+
+  bool igualAmunt(int row, int col) {
+    bool igual = false;
+
+    var r = row - 1;
+    while (!igual && r <= 0) {
+      if (m_matriu[r][col] == m_matriu[row][col]) {
+        igual = true;
+      }
+      r--;
+    }
+    return igual;
+  }
+
+  void cambiaEsquerra(int row, int col) {}
+
+  void cambiaAmunt() {}
   // init matriu a " "
   void initMatriuZeros() {
     for (var i = 0; i < MATRIX_SIZE; i++) {
@@ -166,6 +215,26 @@ class SudokuBlueprint {
       }
       m_matriu.add(row);
     }
+  }
+
+  int getBoxRow(int row) {
+    var boxRow = row;
+
+    while (boxRow - 3 > 2) {
+      boxRow -= 3;
+    }
+
+    return boxRow;
+  }
+
+  int getBoxCol(int col) {
+    var boxCol = col;
+
+    while (boxCol - 3 > 2) {
+      boxCol -= 3;
+    }
+
+    return boxCol;
   }
 
   // -+-+-+-+-+-+-+-+-+ interaccions fora de la classe
