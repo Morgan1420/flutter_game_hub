@@ -18,7 +18,21 @@ class SudokuState extends State<Sudoku> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Sudoku")),
-      body: Column(children: [buildMatrix(), buildIndexRow()]),
+      body: Column(children: [
+        Container(
+          height: MediaQuery.of(context).size.width * 0.1,
+        ),
+        buildMatrix(),
+        const Expanded(
+            child: Divider(
+          color: Colors.transparent,
+        )),
+        buildIndexMatrix(),
+        const Expanded(
+            child: Divider(
+          color: Colors.transparent,
+        )),
+      ]),
     );
   }
 
@@ -48,22 +62,37 @@ class SudokuState extends State<Sudoku> {
   Widget buildMatrixButtonRow(int row) {
     return Row(
       children: [
+        const Expanded(child: Text("")),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.002,
+          height: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2),
+          color: Colors.black,
+        ),
         buildMatrixButton(row, 0),
         buildMatrixButton(row, 1),
         buildMatrixButton(row, 2),
-        const VerticalDivider(
-          indent: 10,
+        Container(
+          width: MediaQuery.of(context).size.width * 0.002,
+          height: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2),
+          color: Colors.black,
         ),
         buildMatrixButton(row, 3),
         buildMatrixButton(row, 4),
         buildMatrixButton(row, 5),
-        const VerticalDivider(
-          indent: 10,
-          thickness: 5,
+        Container(
+          width: MediaQuery.of(context).size.width * 0.002,
+          height: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2),
+          color: Colors.black,
         ),
         buildMatrixButton(row, 6),
         buildMatrixButton(row, 7),
-        buildMatrixButton(row, 8)
+        buildMatrixButton(row, 8),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.002,
+          height: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2),
+          color: Colors.black,
+        ),
+        const Expanded(child: Text(""))
       ],
     );
   }
@@ -72,33 +101,138 @@ class SudokuState extends State<Sudoku> {
   Widget buildMatrix() {
     return Column(
       children: [
+        Container(
+          height: MediaQuery.of(context).size.width * 0.002,
+          width: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2) * 9,
+          color: Colors.black,
+        ),
         buildMatrixButtonRow(0),
         buildMatrixButtonRow(1),
         buildMatrixButtonRow(2),
-        const Divider(
-          thickness: 1,
-          indent: 0,
+        Container(
+          height: MediaQuery.of(context).size.width * 0.002,
+          width: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2) * 9,
+          color: Colors.black,
         ),
         buildMatrixButtonRow(3),
         buildMatrixButtonRow(4),
         buildMatrixButtonRow(5),
-        const Divider(
-          indent: 10,
+        Container(
+          height: MediaQuery.of(context).size.width * 0.002,
+          width: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2) * 9,
+          color: Colors.black,
         ),
         buildMatrixButtonRow(6),
         buildMatrixButtonRow(7),
-        buildMatrixButtonRow(8)
+        buildMatrixButtonRow(8),
+        Container(
+          height: MediaQuery.of(context).size.width * 0.002,
+          width: MediaQuery.of(context).size.width / (MATRIX_SIZE + 2) * 9,
+          color: Colors.black,
+        ),
       ],
     );
   }
 
-  // --------------------------------- index buttons
-  Widget buildIndexButton() {
-    return Container();
+  // --------------------------------- index buttons, rows and matrix
+  Widget buildIndexButton(String bf) {
+    String buttonFunc = bf;
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.12,
+      height: MediaQuery.of(context).size.width * 0.12,
+      decoration:
+          BoxDecoration(border: Border.all(color: Colors.black, width: 0.05)),
+      child: TextButton(
+        // estil
+        style: TextButton.styleFrom(
+          minimumSize: Size.square(MediaQuery.of(context).size.width * 0.12),
+        ),
+        onPressed: null,
+        child: Text(
+          buttonFunc,
+          style: TextStyle(fontSize: 16),
+        ),
+      ),
+    );
   }
 
-  Widget buildIndexRow() {
-    return Row();
+  Widget buildIndexRowTop() {
+    return Row(
+      children: [
+        const Expanded(
+            child: Divider(
+          color: Colors.transparent,
+        )),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.002,
+          height: MediaQuery.of(context).size.width * 0.12,
+          color: Colors.black,
+        ),
+        buildIndexButton("1"),
+        buildIndexButton("2"),
+        buildIndexButton("3"),
+        buildIndexButton("4"),
+        buildIndexButton("5"),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.002,
+          height: MediaQuery.of(context).size.width * 0.12,
+          color: Colors.black,
+        ),
+        const Expanded(
+            child: Divider(
+          color: Colors.transparent,
+        )),
+      ],
+    );
+  }
+
+  Widget buildIndexRowBotom() {
+    return Row(
+      children: [
+        const Expanded(
+            child: Divider(
+          color: Colors.transparent,
+        )),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.002,
+          height: MediaQuery.of(context).size.width * 0.12,
+          color: Colors.black,
+        ),
+        buildIndexButton("6"),
+        buildIndexButton("7"),
+        buildIndexButton("8"),
+        buildIndexButton("9"),
+        buildIndexButton("X"),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.002,
+          height: MediaQuery.of(context).size.width * 0.12,
+          color: Colors.black,
+        ),
+        const Expanded(
+            child: Divider(
+          color: Colors.transparent,
+        )),
+      ],
+    );
+  }
+
+  Widget buildIndexMatrix() {
+    return Column(
+      children: [
+        Container(
+          height: MediaQuery.of(context).size.width * 0.002,
+          width: MediaQuery.of(context).size.width * 0.12 * 5,
+          color: Colors.black,
+        ),
+        buildIndexRowTop(),
+        buildIndexRowBotom(),
+        Container(
+          height: MediaQuery.of(context).size.width * 0.002,
+          width: MediaQuery.of(context).size.width * 0.12 * 5,
+          color: Colors.black,
+        ),
+      ],
+    );
   }
 }
 
@@ -177,6 +311,7 @@ class SudokuBlueprint {
     }
   }
 
+  // funcions que miren si hi ha algun numero repetit a la esquerra o adalt del numero de la posició triada
   bool igualEsquerra(int row, int col) {
     bool igual = false;
 
@@ -203,9 +338,11 @@ class SudokuBlueprint {
     return igual;
   }
 
+  //
   void cambiaEsquerra(int row, int col) {}
 
   void cambiaAmunt() {}
+
   // init matriu a " "
   void initMatriuZeros() {
     for (var i = 0; i < MATRIX_SIZE; i++) {
@@ -217,6 +354,7 @@ class SudokuBlueprint {
     }
   }
 
+  // funcions per a aconseguir la posició d'un element dins de la caixa
   int getBoxRow(int row) {
     var boxRow = row;
 
